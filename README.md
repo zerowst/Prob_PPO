@@ -101,27 +101,19 @@ This is the release codebase for ProbPPO. It is developed by [@zerowst](https://
 This codebase takes the whole part from the [VinePPO]([https://github.com/McGill-NLP/vineppo]).
 
 ### Important files
+Contribution:
+- [`math_episode_similarity.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/episode_generators/math_episode_similarity.py): The main contribution we did for more accurate value estimations.
+
 Trainers:
 - [`ppo_trainer.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/trainers/ppo_trainer.py): The main PPO trainer which is shared between PPO and VinePPO.
 - [`dpo_positive_trainer.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/trainers/dpo_positive_trainer.py): The DPO-Positive trainer.
-- [`restem_trainer.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/trainers/restem_trainer.py): The RestEM trainer.
 
 Episode Generators:
 - [`math_episode_generator.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/episode_generators/math_episode_generator.py): The PPO episode generator.
 - [`math_episode_generator_with_mc_advantages.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/episode_generators/math_episode_generator_with_mc_advantages.py): The VinePPO episode generator. This class contains the implementation for Monte Carlo value estimation.
 - [`math_dpo_positive_episode_generator.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/episode_generators/math_dpo_positive_episode_generator.py): The DPO-Positive episode generator, which generate positive and negative pairs for DPO.
-- [`math_restem_episode_generator.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/episode_generators/math_restem_episode_generator.py): The RestEM episode generator.
-
 Tasks:
-- [`math.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/tasks/math.py): The main task file for MATH dataset.
 - [`gsm8k.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/tasks/gsm8k.py): The main task file for GSM8K dataset.
-- [`math_grader_minerva.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/tasks/math_grader_minerva.py): The grader for MATH dataset.
-- [`math_extract_steps_inplace`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/tasks/math_extract_steps_inplace.py): The helper script to split MATH-style solutions into steps.
-
-Other:
-- [`policy_iteration_runtime.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/runtime/policy_iteration_runtime.py): The main runtime script for running experiments including training and evaluation.
-- [`vllm_server.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/common/vllm_server.py): The handler class for vLLM inference engine.
-- [`cot_inference_strategy.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/inference_strategies/cot_inference_strategy.py): The main class we use for running inferences with vLLM API.
 
 ## Most code work bsaed on VinePPO
 ```bibtex
