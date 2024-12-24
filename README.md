@@ -11,7 +11,7 @@
     <img src="assets/MAE.png" width="80%" />
 </p>
 <p align="center">
-    <img src="assets/unique_answer_count.jpg" width="80%" />
+    <img src="assets/Unique_answer_count.jpg" width="80%" />
 </p>
 <p align="center">
     <img src="assets/diversity.png" width="80%" />
