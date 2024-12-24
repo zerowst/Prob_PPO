@@ -1,0 +1,9 @@
+{
+    "correct_frac": 0.44143290371493554,
+    "exact_match": 0.7952994692949203,
+    "exact_match_frac": 0.44143290371493554,
+    "majority_vote_acc": 0.5663381349507203,
+    "none_answer_extracted_frac_per_problem": 0.005733510235026535,
+    "once_hit": 0.7952994692949203,
+    "unique_answer_count": 5.950720242608036
+}
