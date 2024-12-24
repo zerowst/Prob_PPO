@@ -7,7 +7,18 @@
 <p align="center">
     <img src="assets/correct_frac.jpg" width="80%" />
 </p>
-*Generating up to 40K tok/sec on 8xH100 GPUs for 7B model
+<p align="center">
+    <img src="assets/MAE.jpg" width="80%" />
+</p>
+<p align="center">
+    <img src="assets/unique_answer_count.jpg" width="80%" />
+</p>
+<p align="center">
+    <img src="assets/diversity.png" width="80%" />
+</p>
+<p align="center">
+    <img src="assets/majority_vote_acc.jpg" width="80%" />
+</p>
 
 ## Abstract
 *Large Language Models (LLMs) have achieved remarkable progress in natural language processing (NLP), while they continue to face challenges in reasoning tasks due to their inherent complexity and consistency. Reinforcement Learning (RL) algorithms, such as Proximal Policy Optimization (PPO) and VinePPO, have shown potential for reasoning tasks but still remain constrained by inaccuracies in value estimation and inefficient utilization of sampled data. To address these limitations, we propose ProbPPO, a novel RL training framework designed to fully exploit data generated through Monte Carlo sampling. ProbPPO employs token prediction probabilities to represent the token generation space, thereby modeling the probability distribution of single sample across the entire sampling space. This approach allows more precise value estimation and advantage computation for each reasoning step. In addition, we introduce the importance sampling to acquire the weighted average rewards based on inference probability of each sample improving training stability and accuracy. We conducted experiment on mathematical reasoning tasks with the GSM8K dataset, demonstrating superior value estimation and reasoning accuracy of ProbPPO compared to state-of-the-art baselines. These results underscore the effectiveness of ProbPPO in enhancing reasoning capabilities of LLMs.*
