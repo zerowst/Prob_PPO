@@ -1,7 +1,6 @@
-[![arXiv](https://img.shields.io/badge/arXiv-1234.56789-b31b1b.svg)](https://arxiv.org/abs/2410.01679)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-# VinePPO: Unlocking RL Potential For LLM Reasoning Through Refined Credit Assignment
-> Amirhossein Kazemnejad*, Milad Aghajohari*, Eva Portelance, Alessandro Sordoni, Siva Reddy, Aaron Courville, Nicolas Le Roux
+# ProbPPO:Exploring the Sampling Uncertainty for LLM Reasoning
+> Songtao Wang and Zheng Xiong
 - [Paper](#paper)
 - [Abstract](#abstract)
 - [Updates](#updates)
@@ -29,11 +28,8 @@ Code for reproducing the results in the VinePPO paper. This codebase also provid
 [https://arxiv.org/abs/2410.01679](https://arxiv.org/abs/2410.01679)
 
 ## Abstract
-*Large language models (LLMs) are increasingly applied to complex reasoning tasks that require executing several complex steps before receiving any reward. Properly assigning credit to these steps is essential for enhancing model performance. Proximal Policy Optimization (PPO), a state-of-the-art reinforcement learning (RL) algorithm used for LLM finetuning, employs value networks to tackle credit assignment. However, value networks face challenges in predicting the expected cumulative rewards accurately in complex reasoning tasks, often leading to high-variance updates and suboptimal performance. In this work, we systematically evaluate the efficacy of value networks and reveal their significant shortcomings in reasoning-heavy LLM tasks, showing that they barely outperform a random baseline when comparing alternative steps. To address this, we propose VinePPO, a straightforward approach that leverages the flexibility of language environments to compute unbiased Monte Carlo-based estimates, bypassing the need for large value networks. Our method consistently outperforms PPO and other RL-free baselines across MATH and GSM8K datasets with fewer gradient updates (up to 9x), less wall-clock time (up to 3.0x). These results emphasize the importance of accurate credit assignment in  RL finetuning of LLM and demonstrate VinePPO’s potential as a superior alternative to traditional value network-based methods.*
+*Large Language Models (LLMs) have achieved remarkable progress in natural language processing (NLP), while they continue to face challenges in reasoning tasks due to their inherent complexity and consistency. Reinforcement Learning (RL) algorithms, such as Proximal Policy Optimization (PPO) and VinePPO, have shown potential for reasoning tasks but still remain constrained by inaccuracies in value estimation and inefficient utilization of sampled data. To address these limitations, we propose ProbPPO, a novel RL training framework designed to fully exploit data generated through Monte Carlo sampling. ProbPPO employs token prediction probabilities to represent the token generation space, thereby modeling the probability distribution of single sample across the entire sampling space. This approach allows more precise value estimation and advantage computation for each reasoning step. In addition, we introduce the importance sampling to acquire the weighted average rewards based on inference probability of each sample improving training stability and accuracy. We conducted experiment on mathematical reasoning tasks with the GSM8K dataset, demonstrating superior value estimation and reasoning accuracy of ProbPPO compared to state-of-the-art baselines. These results underscore the effectiveness of ProbPPO in enhancing reasoning capabilities of LLMs.*
 
-## Updates
-- (Oct 1st, 2024) Initial release of VinePPO codebase.
-  
 ## Quick Start
 
 ### Installation
@@ -69,29 +65,11 @@ chmod a+x scripts/download_and_prepare_dataset.sh
 
 We first specify the configuration file for the experiment, and then, we explain how to run the training and evaluation using a configuration file.
 
-**VinePPO Experiments**
-- `configs/polIter_rho1bSft2_vineppo_MATH.jsonnet`
+**ProbPPO Experiments**
 - `configs/polIter_rho1bSft2_vineppo_GSM8K.jsonnet`
-- `configs/polIter_deepseekSft2_vineppo_MATH.jsonnet`
-- `configs/polIter_deepseekSft2_vineppo_GSM8K.jsonnet`
-
-**PPO Experiments**
-- `configs/polIter_rho1bSft2_ppo_MATH.jsonnet`
-- `configs/polIter_rho1bSft2_ppo_GSM8K.jsonnet`
-- `configs/polIter_deepseekSft2_ppo_MATH.jsonnet`
-- `configs/polIter_deepseekSft2_ppo_GSM8K.jsonnet`
 
 **DPO Experiments**
-- `configs/polIter_rho1bSft2_dpo_positive_MATH.jsonnet`
 - `configs/polIter_rho1bSft2_dpo_positive_GSM8K.jsonnet`
-- `configs/polIter_deepseekSft2_dpo_positive_MATH.jsonnet`
-- `configs/polIter_deepseekSft2_dpo_positive_GSM8K.jsonnet`
-
-**RestEM Experiments**
-- `configs/polIter_rho1bSft2_restem_MATH.jsonnet`
-- `configs/polIter_rho1bSft2_restem_GSM8K.jsonnet`
-- `configs/polIter_deepseekSft2_restem_MATH.jsonnet`
-- `configs/polIter_deepseekSft2_restem_GSM8K.jsonnet`
 
 Once you have selected the configuration file, you can run the training and evaluation using the following script:
 ```bash
@@ -115,10 +93,6 @@ deepspeed --no_local_rank --num_gpus=$NUM_GPUS   \
             run_evaluation
 
 ```
-
-This setup was tested on 4x A100 80GB GPUs for Rho models and 8x H100 80GB GPUs for DeepSeek models.
-
-*PS: Refer to [`src/treetune/runtime/policy_iteration_runtime.py`](https://github.com/McGill-NLP/VinePPO/blob/f41ba0380619d588d80d63c4b6c90dbc5c717d1e/src/treetune/runtime/policy_iteration_runtime.py#L162) if you'd like to start reading the codebase.*
 
 ### Single GPU Training (Only for Rho models)
 Add this config `configs/trainers/devBz16.jsonnet` to the `$CONFIGSTR` variable in the script above:
