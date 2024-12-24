@@ -16,8 +16,8 @@ alpha = 0.7
 def softmax(data, lens):
     data = np.array(data)
     lens = np.array(lens)
-    data = data/(2*lens**alpha)         # 平滑,减小差异
-    exp_x = np.exp(data - np.max(data, axis=-1, keepdims=True))  # 防止溢出
+    data = data/(2*lens**alpha)        
+    exp_x = np.exp(data - np.max(data, axis=-1, keepdims=True)) 
     return exp_x / np.sum(exp_x, axis=-1, keepdims=True)
 
 
