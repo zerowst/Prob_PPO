@@ -8,7 +8,7 @@
     <img src="assets/correct_frac.jpg" width="80%" />
 </p>
 <p align="center">
-    <img src="assets/MAE.jpg" width="80%" />
+    <img src="assets/MAE.png" width="80%" />
 </p>
 <p align="center">
     <img src="assets/unique_answer_count.jpg" width="80%" />
