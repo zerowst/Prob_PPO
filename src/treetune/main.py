@@ -6,6 +6,14 @@ import sys
 
 import _jsonnet
 import fire
+import debugpy
+import os
+
+if "DEBUG" in os.environ:
+    
+    print("Waiting for debugger to attach on port 5678...")
+    debugpy.listen(("0.0.0.0", 5678))
+    debugpy.wait_for_client()
 
 
 # Set PYTHONPATH to src/ directory.
@@ -14,6 +22,7 @@ source_dir = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(source_dir))
 
 INITIAL_SEED = 42
+
 
 
 class EntryPoint(object):

@@ -17,7 +17,6 @@ from treetune.episode_generators import EpisodeGenerator, MathEpisodeGenerator
 from treetune.episode_generators.base_episode_generator import Episode
 from treetune.inference_strategies import InferenceStrategy
 from treetune.logging_utils import get_logger
-from treetune.episode_generators.math_episode_similarity import get_similarity, get_weight_sum_value
 
 logger = get_logger(__name__)
 
@@ -86,13 +85,6 @@ class MathEpisodeGeneratorWithMCAdvantages(MathEpisodeGenerator):
             release_memory()
         trajectories = self._create_trajectories(traj_infer_results, iteration)
 
-        ### Sample trajectories
-        # print(trajectories)
-        # with open('sample_trajectories.json', 'w') as f:
-        #     json.dump(trajectories, f)
-        ##
-
-
         #####################################################################################
         # Estimate the value of each state in the trajectories using Monte Carlo rollouts
         #####################################################################################
@@ -137,12 +129,6 @@ class MathEpisodeGeneratorWithMCAdvantages(MathEpisodeGenerator):
 
             self.distributed_state.wait_for_everyone()
             unique_results = Dataset.load_from_disk(str(val_est_result_path))
-
-        ### unique result------------------------------------------------------------------------
-        # with open('unique_value_estimation_results.json', 'w') as f:
-        #     json.dump(unique_results, f)
-        #     logger.info(f"Unique value estimation results: {unique_results}")
-        ###------------------------------------------------------------------------
 
         kill_vllm_server()
         release_memory()
@@ -201,9 +187,6 @@ class MathEpisodeGeneratorWithMCAdvantages(MathEpisodeGenerator):
             iteration=iteration,
             results_root_dir=results_root_dir,
         )
-
-        ### trajectories here is updated with values for each step, save here.   ###
-
 
         return episodes
 
@@ -418,20 +401,6 @@ class MathEpisodeGeneratorWithMCAdvantages(MathEpisodeGenerator):
         return advantages
 
     def _compute_mc_value(
-        # Computing mc value for single data instance, 
-        # data instance and query is for single problem, 
-        # tree is the reasoning tree for single problem. 
-        # One step has many children which are following up steps until the end
-        # Therefore, there are reward for each of children steps, and the accumulation reward is mc value
-        #
-        # THE MC VALUE computed is for the step in the TREE
-
-        # No need to clarify the structure of whole reasoning tree
-        # Just based on the case of single step of single problem, calculate the similarity
-        #
-        #
-        #
-        # TODO 提出probs, softmax计算value值
         self,
         *,
         query: str = None,
@@ -441,7 +410,7 @@ class MathEpisodeGeneratorWithMCAdvantages(MathEpisodeGenerator):
     ) -> Union[float, Tuple[float, List[float]]]:
         # noinspection DuplicatedCode
         tree = json.loads(value_estimation_result["_treetune__reasoning_tree"])
-        rollouts = [(c["answer"], c["finish_reason"], c["cot_probs"], c["len_probs"]) for c in tree["children"]]
+        rollouts = [(c["answer"], c["finish_reason"]) for c in tree["children"]]
 
         rewards = [
             (
@@ -449,41 +418,18 @@ class MathEpisodeGeneratorWithMCAdvantages(MathEpisodeGenerator):
                 if finish_reason != "length"
                 else self.reward_function.get_unfinished_response_penalty()
             )
-            for rol, finish_reason, _, _ in rollouts
+            for rol, finish_reason in rollouts
         ]
 
-
-
-        S = True
-        P = False
-
-        beta = 0.2
-        
-        [pos_sim, neg_sim] = get_similarity(rollouts=rollouts, rewards=rewards) if S else 0
-
-        prob_value = get_weight_sum_value(rollouts, rewards) if P else 0
-
         if len(rewards) == 0:
-            mc_value = 0.0 
+            mc_value = 0.0
         else:
-            mc_value = prob_value if P else (sum(rewards) / len(rewards) * (1 + pos_sim * beta) - \
-                                             (len(rewards) - sum(rewards))/ len(rewards) * beta/2 * (1-neg_sim)) 
-            
-
-        
-        # ############################################################# softmax 计算value #################################################
-        # # TODO 计算value值
-        # if len(rewards) == 0:
-        #     mc_value = 0.0 
-        # else:
-        #     mc_value = get_weight_sum_value(rollouts, rewards)
+            mc_value = sum(rewards) / len(rewards)
 
         if return_rewards:
             return mc_value, rewards
 
         return mc_value
-    
-
 
     def _rollout_eval_callback(
         self,

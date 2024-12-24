@@ -91,6 +91,9 @@ class IIDExpander(NodeExpander):
         ), "Node_text_template must contain '{chain_of_thought}'"
 
     async def _sample_node(self, prefix: str, depth: int) -> Node:
+        """
+        given the prefix prompt and the present depth, output the children node
+        """
         result = await self._run_program(self.program_template, prefix=prefix)
         variables = result.variables()
         chain_of_thought = variables["chain_of_thought"]
@@ -295,6 +298,8 @@ class EfficientIIDExpander(NodeExpander):
             logger.warning("stop_regex is not supported. Please use `stop`")
 
         self.num_expansion_rounds = num_expansion_rounds
+        # 重新获取logprob
+        # program_kwargs["logprobs"] = 1
         self.program_kwargs = program_kwargs
         self.program_template = program
         assert (
@@ -314,6 +319,8 @@ class EfficientIIDExpander(NodeExpander):
     async def _sample_node(
         self, prefix: str, depth: int, branch_factor: int, seed: Optional[int] = None
     ) -> List[Node]:
+
+
         program_kwargs = self.program_kwargs.copy()
 
         need_to_compute_max_tokens = (
@@ -333,11 +340,24 @@ class EfficientIIDExpander(NodeExpander):
         program_kwargs["num_samples"] = branch_factor
         if seed is not None:
             program_kwargs["seed"] = seed
-
+        
         program = format_string(self.program_template, **program_kwargs)
+        program = program[:-2] + ' logprobs=1' + program[-2:]
         result = await self._run_program(program, prefix=prefix)
 
         variables = result.variables()
+
+        # adding probability of variables here
+
+        if "chain_of_thought_logprobs" in variables.keys():
+            logprobs: List[float] = variables["chain_of_thought_logprobs"]
+            assert isinstance(logprobs, list)
+
+            cot_logprobs = [sum(row) for row in logprobs]
+            len_logprobs = [len(row) for row in logprobs]
+
+
+
         generated_chain_of_thoughts = variables["chain_of_thought"]
         finish_reasons = variables["chain_of_thought_finish_reason"]
 
@@ -349,8 +369,8 @@ class EfficientIIDExpander(NodeExpander):
             finish_reasons = [finish_reasons]
 
         nodes = []
-        for chain_of_thought, finish_reason in zip(
-            generated_chain_of_thoughts, finish_reasons
+        for chain_of_thought, finish_reason, cot_logprob, len_logprob in zip(
+            generated_chain_of_thoughts, finish_reasons, cot_logprobs, len_logprobs
         ):
             node_text = self.node_text_template.format(
                 chain_of_thought=chain_of_thought
@@ -358,16 +378,16 @@ class EfficientIIDExpander(NodeExpander):
             full_text = program.replace("{{prefix}}", prefix)
             full_text = replace_gen_pattern(full_text, node_text)
             # full_text = re.sub(r"\{\{gen(.|\s)*}}", node_text, full_text)
-
             node = {
                 "text": node_text,
                 "depth": depth,
                 "full_text": full_text,
                 "stop_text": None,
                 "finish_reason": finish_reason,
+                "cot_probs": cot_logprob,
+                "len_probs": len_logprob,
             }
             nodes.append(node)
-
         return nodes
 
     def _compute_max_tokens(
@@ -380,6 +400,7 @@ class EfficientIIDExpander(NodeExpander):
         )
 
     async def expand(self, current_node: Node, prefix: str, depth: int) -> List[Node]:
+        # 构建 main branch
         branch_factor = self.branch_factor_strategy(current_node)
         tasks = []
         for i in range(self.num_expansion_rounds):

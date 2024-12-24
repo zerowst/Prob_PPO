@@ -2408,12 +2408,27 @@ class PPOTrainer(DeepSpeedPolicyTrainer):
         if exclude is None:
             exclude = []
 
+        # if self._is_main_process():
+        #     for checkpoint in self.temp_checkpoint_dir.iterdir():
+        #         if (
+        #             checkpoint.is_dir()
+        #             and checkpoint.name.startswith("ckpt--")
+        #             and checkpoint not in exclude
+        #         ):
+        #             logger.info(f"Removing old temp checkpoint {checkpoint}")
+        #             shutil.rmtree(checkpoint)
+
         if self._is_main_process():
             for checkpoint in self.temp_checkpoint_dir.iterdir():
+
+                print(f'checkpoint.name {checkpoint.name}')
+                iteration = int(checkpoint.name.split('--')[1].split('iter_')[1])
+                print(iteration)
                 if (
                     checkpoint.is_dir()
-                    and checkpoint.name.startswith("ckpt--")
+                    and checkpoint.name.startswith("ckpt--iter_")
                     and checkpoint not in exclude
+                    and iteration % 10 != 0
                 ):
                     logger.info(f"Removing old temp checkpoint {checkpoint}")
                     shutil.rmtree(checkpoint)

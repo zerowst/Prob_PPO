@@ -99,5 +99,5 @@ local num_mc_rollouts = 9;
     ],
 }
 + (import 'episode_generators/9rolls.jsonnet')
-+ (import 'trainers/refKl0.0001.jsonnet')
++ (import 'trainers/refKl0.0001.jsonnt')
 + (import 'trainers/klLoss.jsonnet')

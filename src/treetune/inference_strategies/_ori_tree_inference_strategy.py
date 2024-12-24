@@ -213,7 +213,7 @@ class TreeInferenceStrategy(InferenceStrategy):
 
             format_kwargs = {key: data_instance[key] for key in question_format_keys}
             initial_prompt = self.question_template.format(**format_kwargs)
-        
+
             tasks.append(
                 asyncio.create_task(
                     wrapper_construct_tree(
@@ -251,11 +251,6 @@ class TreeInferenceStrategy(InferenceStrategy):
         trees = [
             trees[idx] for idx in dataset["_treetune__idx"]
         ]  # change order back to original
-
-        ### trees for each task -----------------------------------------------------------------------
-        # print(f'\n\nCurrent trees: {trees}\n\n')
-        ### -----------------------------------------------------------------------
-
         assert len(trees) == len(
             dataset
         ), f"len(trees)={len(trees)}, len(dataset)={len(dataset)}"
@@ -328,7 +323,7 @@ class TreeInferenceStrategy(InferenceStrategy):
         async def dfs(node: Node, prefix: str, depth: int) -> None:
             if depth >= max_depth:
                 return
-            # TODO expand node from the input node
+
             children = await self.node_expander.expand(node, prefix, depth)
             node["children"] = children
 
@@ -361,7 +356,7 @@ class TreeInferenceStrategy(InferenceStrategy):
 
             # Wait for the children expansion tasks to finish
             await asyncio.gather(*children_expansion_tasks)
-        # expand tree from initial_prompt
+
         await dfs(tree, initial_prompt, 0)
 
         # Remove the `_data_instance` field from the tree
