@@ -5,7 +5,7 @@
 
 
 <p align="center">
-    <img src="assets/Correct frac.png" width="80%" />
+    <img src="assets/Correct\frac.png" width="80%" />
 </p>
 *Generating up to 40K tok/sec on 8xH100 GPUs for 7B model
 
