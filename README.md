@@ -28,25 +28,10 @@
 ### Installation
 This project is implemented based torch, Huggingface, FlashAttention, DeepSpeed, and vLLM libraries. To obtain the dependencies, we provide the following three ways:
 
-**1. Using pip**
+** Using pip**
 ```bash
 # Make sure torch 2.1.2 and cuda 12.1 is installed
 pip install -r requirements.txt
-```
-**2. Using Docker**
-```bash
-sudo docker run \
-  --ipc=host \
-  --gpus all \
-  kazemnejad/treetune:v15.1 \
-  python -c "import torch; print(torch.__version__)"
-```
-*Optional: You can use the following [Dockerfile](https://github.com/McGill-NLP/VinePPO/blob/main/Dockerfile) to build your own image*
-
-**3. Using Singularity Container**
-```bash
-singularity pull --arch amd64 library://realtreetune/dev/treetune:v15
-singularity exec --nv treetune_v15.sif python -c "import torch; print(torch.__version__)"
 ```
 ### Download the datasets
 ```bash
@@ -101,27 +86,6 @@ To run the experiments, you can use the following script:
 ```bash
 chmod +x run.sh
 ./run.sh
-```
-2. Running inside docker
-```bash
-mkdir -p experiments
-docker run \
-    --ipc=host \
-    --gpus all \
-    -v "$(pwd)":/src \
-    --workdir /src \
-    kazemnejad/treetune:v15.1 \
-    ./run.sh
-```
-3. Running inside singularity
-```bash
-mkdir -p experiments
-chmod a+x run.sh
-singularity exec --nv \
-	-H $(pwd):$HOME \
-	-B $(pwd)/experiments:$HOME/experiments \
-	/path/to/singularity/image/treetune_v15.sif \
-	./run.sh
 ```
 ## Initial SFT Checkpoints
 
