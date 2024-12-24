@@ -104,6 +104,10 @@ This codebase takes the whole part from the [VinePPO]([https://github.com/McGill
 Contribution:
 - [`math_episode_similarity.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/episode_generators/math_episode_similarity.py): The main contribution we did for more accurate value estimations.
 
+Figure Plotting:
+- [`draw_mae.py`](https://github.com/zerowst/Prob_PPO/draw_mae.py): Value estimation MAE plot.
+- [`metrics_comparison.py`](https://github.com/zerowst/Prob_PPO/metrics_comparison.py): Comparison within different metrics.
+
 Trainers:
 - [`ppo_trainer.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/trainers/ppo_trainer.py): The main PPO trainer which is shared between PPO and VinePPO.
 - [`dpo_positive_trainer.py`](https://github.com/zerowst/Prob_PPO/tree/main/src/treetune/trainers/dpo_positive_trainer.py): The DPO-Positive trainer.
